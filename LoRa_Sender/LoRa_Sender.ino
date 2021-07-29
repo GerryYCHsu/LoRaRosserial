@@ -1,11 +1,31 @@
+#include <ros.h>
+#include <ros/time.h>
+#include <nav_msgs/Odometry.h>
 #include <SPI.h>
 #include <LoRa.h>
-
-int counter=0;  //傳送次數計數器
 
 #define NSS 10
 #define RESET 9
 #define DIO0 2
+int counter=0;  //傳送次數計數器
+
+ros::NodeHandle nh;
+ros::Time rosNow(void);
+ros::Time addMicros(ros::Time & t, uint32_t _micros); 
+
+void OdomCallback(const nav_msgs::Odometry& odomMsgs){
+  //Serial.print("Sending packet: ");
+  //Serial.println(counter);
+  
+  LoRa.beginPacket();  //封包傳送開始
+  LoRa.print(odomMsgs.pose.covariance);  //封包內容
+  LoRa.print(counter);  //封包內容
+  LoRa.endPacket();  //封包傳送結束
+  counter++;  //計數器增量 1
+}
+
+//nav_msgs::Odometry OdomMsgs;
+ros::Subscriber<nav_msgs::Odometry> OdomSubscriber("odom", &OdomCallback);
 
 void setup() {
   Serial.begin(9600);
@@ -19,12 +39,6 @@ void setup() {
   }
 
 void loop() {
-  Serial.print("Sending packet: ");
-  Serial.println(counter);
-  LoRa.beginPacket();  //封包傳送開始
-  LoRa.print("hello ");  //封包內容
-  LoRa.print(counter);  //封包內容
-  LoRa.endPacket();  //封包傳送結束
-  counter++;  //計數器增量 1
+  nh.spinOnce();
   delay(5000);
   }
