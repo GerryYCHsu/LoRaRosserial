@@ -8,11 +8,6 @@ void setup() {
   Serial.begin(115200);
 }
 
-void SerialDoubleWrite(double d) {
-  byte * b = (byte *) &d;
-  Serial.write(b,4);
-}
-
 void loop() {
   // put your main code here, to run repeatedly:
   a += 1.57075;
