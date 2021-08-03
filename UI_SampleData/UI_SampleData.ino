@@ -1,6 +1,8 @@
+#include <ArduinoJson.h>
 double x = 0.0;//unit: m
 double y = 0.0;//unit: m
 double a = 0.0;//unit: rad (0~6.2831853071796)
+StaticJsonDocument<200> doc;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
@@ -25,10 +27,9 @@ void loop() {
       }
     }  
   }
-  Serial.print("S");
-  SerialDoubleWrite(x);
-  SerialDoubleWrite(y);
-  SerialDoubleWrite(a);
-  Serial.print("E"); 
+  doc["x"] = x;
+  doc["y"] = y;
+  doc["a"] = a;
+  serializeJson(doc, Serial);
   delay(1000);
 }
